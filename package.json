@@ -1,12 +1,9 @@
 {
-  "name": "vercel-api",
-  "version": "1.0.0",
-  "description": "A simple API deployed on Vercel",
-  "dependencies": {
-    "express": "^4.19.2"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "license": "MIT"
-}
+    "name": "my-node-app",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    }
+  }
+  
