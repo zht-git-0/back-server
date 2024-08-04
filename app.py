@@ -6,7 +6,7 @@ app = Flask(__name__)
 @cross_origin() 
 def get_wa():
     return 'Hello World', 200  # 返回一个成功的消息
-@app.route('/data', methods=['POST','GET'])
+@app.route('/pvz', methods=['POST','GET'])
 @cross_origin() 
 def get_data():
     return pvz.get_pvz_url(),200
