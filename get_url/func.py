@@ -9,7 +9,7 @@ def get_max_e(url):
     html=etree.HTML(res.content)
     max_e=0
     title=re.findall('《.*?》',html.xpath('/html/head/title/text()')[0])[0]
-    i=0
+    i=0 
     while True:
         i+=1
         try:
