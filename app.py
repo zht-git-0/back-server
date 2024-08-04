@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import cross_origin
-import os
 from get_url.main import main_thread
 app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])

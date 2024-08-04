@@ -1,5 +1,6 @@
 import asyncio
 from playwright.async_api import async_playwright
+#from func import *
 from get_url.func import *
 import threading
 import re
@@ -14,9 +15,9 @@ async def fetch_url(url, context,i):
     try:await page.goto(url)
     except:None
 async def main(base_url):  
+    global video_urls,target_url
     p_id=base_url.split('/')[-1].split('.')[0]
     e,title=get_max_e(base_url)
-    print(title)
     target_url = "https://v16m-default.akamaized.net/"
     video_urls = [0 for i in range(e-1)]
     async with async_playwright() as p:    
@@ -28,5 +29,5 @@ async def main(base_url):
         await context.close()  # 在所有任务完成后关闭上下文
         await browser.close()
         return video_urls
-def main_thread():
-    return asyncio.run(main())
+def main_thread(base_url):
+    return asyncio.run(main(base_url))
