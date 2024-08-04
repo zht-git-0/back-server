@@ -10,6 +10,6 @@ def get_wa():
 @cross_origin() 
 def get_data():
     base_url='https://www.295yhw.com/video/7592.html'
-    return main_thread(base_url), 200  # 返回一个成功的消息
+    return 1, 200  # 返回一个成功的消息
 if __name__ == '__main__':
     app.run(host='localhost', port=3080)
