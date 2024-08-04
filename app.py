@@ -2,8 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import cross_origin
 import asyncio
 from playwright.async_api import async_playwright
-import os
-os.system('playwright install')
 app = Flask(__name__)
 async def fetch_url(url, context,i):
     page = await context.new_page()  

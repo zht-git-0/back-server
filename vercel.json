@@ -4,7 +4,9 @@
     {
       "src": "app.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.10" }
+      "config": { "runtime": "python3.10",
+                  "buildCommand": "playwright install" }
+
     }
   ],
   "routes": [
