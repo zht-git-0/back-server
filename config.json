@@ -1,0 +1,27 @@
+[
+    {
+        "name": "STEAM",
+        "detail": "SteamSetup.exe",
+        "url": "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
+    },
+    {
+        "name": "植物大战僵尸杂交版V2.3",
+        "detail": "跟新至最新版",
+        "url": ""
+    },
+    {
+        "name": "植物大战僵尸杂交版全通关存档",
+        "detail": "已适配V2.3",
+        "url": "current_href/src/3dmmods_植物大战僵尸杂交版v2.3-全通关存档_by_小松梦幻.zip"
+    },
+    {
+        "name": "迷雾通",
+        "detail": "免费VPN",
+        "url": "current_href/src/geph-windows-setup.exe"
+    },
+    {
+        "name": "HMCL启动器",
+        "detail": "Hello Minecraft! Launcher",
+        "url": "current_href/src/HMCL.exe"
+    }
+]
