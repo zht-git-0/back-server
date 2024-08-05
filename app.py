@@ -11,7 +11,7 @@ def index():
     return jsonify(urls),200
 @app.route('/urls', methods=['POST','GET'])
 @cross_origin() 
-def urls():
+def push_urls():
     with open('config.json', 'r', encoding='utf-8') as f:
         urls = json.load(f)
     for i in range(len(urls)):
