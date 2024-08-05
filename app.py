@@ -8,6 +8,8 @@ app = Flask(__name__)
 def index():
     with open('config.json', 'r', encoding='utf-8') as f:
         urls = json.load(f)
+    with open('config.json', 'w', encoding='utf-8') as f:
+        json.dump(urls, f, ensure_ascii=False, indent=4)
     return jsonify(urls),200
 @app.route('/urls', methods=['POST','GET'])
 @cross_origin() 
