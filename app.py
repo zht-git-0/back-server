@@ -51,5 +51,19 @@ def delete():
                 json.dump(urls, f, ensure_ascii=False, indent=4)
             return jsonify(urls), 200
     return jsonify(urls), 200
+@app.route('/search', methods=['POST','GET'])
+@cross_origin() 
+def search():
+    name = request.args.get('name')
+    res=[]
+    with open('config.json', 'r', encoding='utf-8') as f:
+        urls = json.load(f)
+    for i in range(len(urls)):
+        if name in urls[i]["name"]:
+            res.append(urls[i])
+    if res != []:
+        return jsonify(res), 200
+    else:
+        return jsonify({"message":"not found"}), 404
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
