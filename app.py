@@ -18,6 +18,8 @@ def urls():
         if '植物大战僵尸杂交版'in urls[i]["name"]:
             urls[i]["url"] = pvz.get_pvz_url()
             break
+    with open('config.json', 'w', encoding='utf-8') as f:
+        json.dump(urls, f, ensure_ascii=False, indent=4)
     return jsonify(urls),200
 @app.route('/update', methods=['POST','GET'])
 @cross_origin() 
