@@ -54,4 +54,4 @@ def delete():
             return jsonify(urls), 200
     return jsonify(urls), 200
 if __name__ == '__main__':
-    app.run(host='localhost', port=3080)
+    app.run(host='localhost', port=3000)
