@@ -26,7 +26,7 @@
     },
     {
         "name": "动漫下载器",
-        "detail": "使用方法详见https://github.com/zht-git-0/dm_downloader",
+        "detail": "使用方法详见<a href='https://github.com/zht-git-0/dm_downloader'>https://github.com/zht-git-0/dm_downloader</a>",
         "url":"https://zht-web.us.kg/src/dm_downloader.rar"
     }
 ]
