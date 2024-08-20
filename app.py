@@ -3,6 +3,7 @@ from flask_cors import cross_origin
 import requests
 import pvz
 import json
+from playwright.sync_api import sync_playwright
 app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
