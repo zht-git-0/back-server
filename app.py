@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import cross_origin
+import requests
 import pvz
 import json
 app = Flask(__name__)
@@ -65,5 +66,21 @@ def search():
         return jsonify(res), 200
     else:
         return jsonify({"message":"not found"}), 404
+@app.route('/proxy', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def proxy():
+    target_url = 'https://baidu.com'  # 修改为你要代理的URL
+    response = requests.request(
+        method=request.method,
+        url=target_url,
+        headers={key: value for key, value in request.headers if key != 'Host'},
+        data=request.get_data(),
+        cookies=request.cookies,
+        allow_redirects=False
+    )
+    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    headers = [(name, value) for name, value in response.raw.headers.items()
+               if name.lower() not in excluded_headers]
+    
+    return Response(response.content, response.status_code, headers)
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
