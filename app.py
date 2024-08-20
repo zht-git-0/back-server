@@ -68,7 +68,7 @@ def search():
         return jsonify({"message":"not found"}), 404
 @app.route('/proxy', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def proxy():
-    target_url = 'https://baidu.com'  # 修改为你要代理的URL
+    target_url = request.args.get('url')  # 修改为你要代理的URL
     response = requests.request(
         method=request.method,
         url=target_url,
