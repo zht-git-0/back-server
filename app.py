@@ -74,11 +74,15 @@ def proxy():
         return "URL is required", 400
 
     try:
-        response = requests.get(url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url)
+            page_content = page.content()  # 获取动态加载后的页面内容
+            browser.close()
+    except Exception as e:
         return f"Failed to retrieve the page: {e}", 500
 
-    return render_template_string(str(response.content, 'utf-8'))
+    return render_template_string(page_content)
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
