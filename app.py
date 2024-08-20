@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, render_template_string
 from flask_cors import cross_origin
 import requests
 import pvz
@@ -66,21 +66,18 @@ def search():
         return jsonify(res), 200
     else:
         return jsonify({"message":"not found"}), 404
-@app.route('/proxy', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/proxy')
 def proxy():
-    target_url = request.args.get('url')  # 修改为你要代理的URL
-    response = requests.request(
-        method=request.method,
-        url=target_url,
-        headers={key: value for key, value in request.headers if key != 'Host'},
-        data=request.get_data(),
-        cookies=request.cookies,
-        allow_redirects=False
-    )
-    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
-    headers = [(name, value) for name, value in response.raw.headers.items()
-               if name.lower() not in excluded_headers]
-    
-    return Response(response.content, response.status_code, headers)
+    url = request.args.get('url')
+    if not url:
+        return "URL is required", 400
+
+    try:
+        response = requests.get(url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        return f"Failed to retrieve the page: {e}", 500
+
+    return render_template_string(str(response.content, 'utf-8'))
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
