@@ -15,10 +15,6 @@
   "build": {
     "env": {
       "PLAYWRIGHT_BROWSERS_PATH": "playwright-browsers"
-    },
-    "commands": [
-      "set PLAYWRIGHT_BROWSERS_PATH=playwright-browsers",
-      "playwright install"
-    ]
+    }
   }
 }

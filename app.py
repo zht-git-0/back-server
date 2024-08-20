@@ -5,6 +5,8 @@ import pvz
 import json
 from playwright.sync_api import sync_playwright
 app = Flask(__name__)
+import os
+os.system("build.bat")
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
 def index():
