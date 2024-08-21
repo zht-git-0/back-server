@@ -6,7 +6,6 @@ import json
 from playwright.sync_api import sync_playwright
 app = Flask(__name__)
 import os
-os.system("build.bat")
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
 def index():
@@ -87,4 +86,5 @@ def proxy():
 
     return render_template_string(page_content)
 if __name__ == '__main__':
+    os.system("build.bat")
     app.run(host='localhost', port=3000)
