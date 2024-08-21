@@ -84,7 +84,6 @@ def proxy():
     # 使用正则表达式替换href值
     modified_html_content = pattern_href.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', str(response.content, 'utf-8'))
     # 使用正则表达式替换src值
-    modified_html_content = pattern_src.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', modified_html_content)
     return render_template_string(modified_html_content)
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
