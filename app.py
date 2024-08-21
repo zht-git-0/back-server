@@ -78,9 +78,13 @@ def proxy():
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         return f"Failed to retrieve the page: {e}", 500
-    pattern = re.compile(r'(<a\s+[^>]*href=["\'])([^"\']+)(["\'])')
+    # 修改后的正则表达式模式，只匹配以http开头的href和src值
+    pattern_href = re.compile(r'(<a\s+[^>]*href=["\'])(http[^"\']+)(["\'])')
+    pattern_src = re.compile(r'(<[^>]*src=["\'])(http[^"\']+)(["\'])')
     # 使用正则表达式替换href值
-    modified_html_content = pattern.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', str(response.content, 'utf-8'))
+    modified_html_content = pattern_href.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', str(response.content, 'utf-8'))
+    # 使用正则表达式替换src值
+    modified_html_content = pattern_src.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', modified_html_content)
     return render_template_string(modified_html_content)
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
