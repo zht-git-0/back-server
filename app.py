@@ -3,8 +3,8 @@ from flask_cors import cross_origin
 import requests
 import pvz
 import json
+import re
 app = Flask(__name__)
-import os
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
 def index():
@@ -78,7 +78,9 @@ def proxy():
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         return f"Failed to retrieve the page: {e}", 500
-
-    return render_template_string(str(response.content, 'utf-8'))
+    pattern = re.compile(r'(<a\s+[^>]*href=["\'])([^"\']+)(["\'])')
+    # 使用正则表达式替换href值
+    modified_html_content = pattern.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', str(response.content, 'utf-8'))
+    return render_template_string(modified_html_content)
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
