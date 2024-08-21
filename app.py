@@ -85,6 +85,23 @@ def proxy():
         return f"Failed to retrieve the page: {e}", 500
 
     return render_template_string(page_content)
+@app.route('/p')
+def get_proxy():
+    url = request.args.get('url')
+    if not url:
+        return "URL is required", 400
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url)
+            page_content = page.content()  # 获取动态加载后的页面内容
+            browser.close()
+    except Exception as e:
+        return f"Failed to retrieve the page: {e}", 500
+
+    return render_template_string(page_content)
 if __name__ == '__main__':
     os.system("build.bat")
     app.run(host='localhost', port=3000)
