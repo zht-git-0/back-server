@@ -101,15 +101,10 @@ def proxy():
                     href = tag['href']
                     if href.startswith('http'):
                         tag['href'] = f'{request.path}?url={href}'
-                    #elif not href.startswith('www'):
-                    #    tag['href'] = f'{request.path}/proxy?url={url}{href}'
                 elif tag.name in ['img', 'script'] and tag.has_attr('src'):
                     src = tag['src']
                     if src.startswith('http'):
                         tag['src'] = f'{request.path}?url={src}'
-                    #elif not href.startswith('www'):
-                    #    tag['src'] = f'{request.path}/proxy?url={url}{src}'
-
             modified_html_content = str(soup)
             return Response(modified_html_content, content_type='text/html; charset=utf-8')
 
