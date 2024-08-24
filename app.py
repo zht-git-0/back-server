@@ -80,7 +80,9 @@ def proxy():
         # 获取请求头中的 User-Agent 和 referer
         headers = {
             'User-Agent': request.headers.get('User-Agent', 'Mozilla/5.0'),
-            'Referer': request.referrer
+            'Referer': request.referrer,
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
         }
 
         # 发起请求并获取响应
