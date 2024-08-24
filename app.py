@@ -4,6 +4,7 @@ import requests
 import pvz
 import json
 import re
+from bs4 import BeautifulSoup
 app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
@@ -67,6 +68,7 @@ def search():
         return jsonify(res), 200
     else:
         return jsonify({"message":"not found"}), 404
+#http://localhost:3000/proxy?url=https://www.baidu.com
 @app.route('/proxy')
 def proxy():
     url = request.args.get('url')
@@ -74,16 +76,35 @@ def proxy():
         return "URL is required", 400
 
     try:
-        response = requests.get(url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
+        headers = {
+            'User-Agent': request.headers.get('User-Agent', 'Mozilla/5.0'),
+            'referer': request.referrer
+        }
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
+
+        # 处理HTML内容
+        if 'text/html' not in response.headers.get('Content-Type', ''):
+            return "The URL does not return an HTML content", 400
+
+        content = response.content
+        soup = BeautifulSoup(content, 'html.parser')
+
+        # 替换 href 和 src 属性中的 URL
+        for tag in soup.find_all(['a', 'img', 'script']):
+            if tag.name == 'a' and tag.has_attr('href'):
+                href = tag['href']
+                if href.startswith('http'):
+                    tag['href'] = f'https://zht-back-server.us.kg/proxy?url={href}'
+            elif tag.name in ['img', 'script'] and tag.has_attr('src'):
+                src = tag['src']
+                if src.startswith('http'):
+                    tag['src'] = f'https://zht-back-server.us.kg/proxy?url={src}'
+
+        modified_html_content = str(soup)
+        return Response(modified_html_content, content_type='text/html; charset=utf-8')
+
     except requests.exceptions.RequestException as e:
         return f"Failed to retrieve the page: {e}", 500
-    # 修改后的正则表达式模式，只匹配以http开头的href和src值
-    pattern_href = re.compile(r'(<a\s+[^>]*href=["\'])(http[^"\']+)(["\'])')
-    pattern_src = re.compile(r'(<[^>]*src=["\'])(http[^"\']+)(["\'])')
-    # 使用正则表达式替换href值
-    modified_html_content = pattern_href.sub(r'\1https://zht-back-server.us.kg/proxy?url=\2\3', str(response.content, 'utf-8'))
-    # 使用正则表达式替换src值
-    return render_template_string(modified_html_content)
 if __name__ == '__main__':
     app.run(host='localhost', port=3000)
