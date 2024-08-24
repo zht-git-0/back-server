@@ -5,6 +5,7 @@ import pvz
 import json
 import re
 from bs4 import BeautifulSoup
+import mimetypes
 app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
@@ -76,33 +77,55 @@ def proxy():
         return "URL is required", 400
 
     try:
+        # 获取请求头中的 User-Agent 和 referer
         headers = {
             'User-Agent': request.headers.get('User-Agent', 'Mozilla/5.0'),
-            'referer': request.referrer
+            'Referer': request.referrer
         }
+
+        # 发起请求并获取响应
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
-        # 处理HTML内容
-        if 'text/html' not in response.headers.get('Content-Type', ''):
-            return "The URL does not return an HTML content", 400
-
+        # 获取响应内容和类型
+        content_type = response.headers.get('Content-Type', '')
         content = response.content
-        soup = BeautifulSoup(content, 'html.parser')
+        mime_type, _ = mimetypes.guess_type(url)
+        # 处理 HTML 内容
+        if 'text/html' in content_type:
+            soup = BeautifulSoup(content, 'html.parser')
 
-        # 替换 href 和 src 属性中的 URL
-        for tag in soup.find_all(['a', 'img', 'script']):
-            if tag.name == 'a' and tag.has_attr('href'):
-                href = tag['href']
-                if href.startswith('http'):
-                    tag['href'] = f'https://zht-back-server.us.kg/proxy?url={href}'
-            elif tag.name in ['img', 'script'] and tag.has_attr('src'):
-                src = tag['src']
-                if src.startswith('http'):
-                    tag['src'] = f'https://zht-back-server.us.kg/proxy?url={src}'
+            # 替换 href 和 src 属性中的 URL
+            for tag in soup.find_all(['a', 'img', 'script']):
+                if tag.name == 'a' and tag.has_attr('href'):
+                    href = tag['href']
+                    if href.startswith('http'):
+                        tag['href'] = f'{request.path}?url={href}'
+                    #elif not href.startswith('www'):
+                    #    tag['href'] = f'{request.path}/proxy?url={url}{href}'
+                elif tag.name in ['img', 'script'] and tag.has_attr('src'):
+                    src = tag['src']
+                    if src.startswith('http'):
+                        tag['src'] = f'{request.path}?url={src}'
+                    #elif not href.startswith('www'):
+                    #    tag['src'] = f'{request.path}/proxy?url={url}{src}'
 
-        modified_html_content = str(soup)
-        return Response(modified_html_content, content_type='text/html; charset=utf-8')
+            modified_html_content = str(soup)
+            return Response(modified_html_content, content_type='text/html; charset=utf-8')
+
+        # 处理非 HTML 内容
+        else:
+            # 尝试猜测 MIME 类型
+            mime_type, _ = mimetypes.guess_type(url)
+            if mime_type is None:
+                mime_type = content_type
+
+            # 如果 MIME 类型未知或为空，则使用响应头中的内容类型
+            if not mime_type:
+                mime_type = content_type
+
+            # 返回内容
+            return Response(content, content_type=mime_type)
 
     except requests.exceptions.RequestException as e:
         return f"Failed to retrieve the page: {e}", 500
