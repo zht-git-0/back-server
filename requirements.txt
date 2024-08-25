@@ -1,4 +1,5 @@
 beautifulsoup4==4.11.1
 Flask==3.0.3
+Flask_Caching==2.3.0
 Flask_Cors==4.0.0
 Requests==2.32.3
