@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response, render_template_string, session
+from flask import Flask, request, jsonify, Response, render_template_string
 from flask_cors import cross_origin
 from flask_caching import Cache
 import requests
@@ -7,15 +7,24 @@ import json
 import re
 from bs4 import BeautifulSoup
 import mimetypes
-from flask_caching import Cache
 app = Flask(__name__)
-cache = Cache(app)
-app.secret_key = '123456'
+targeturl = ''
+@app.before_request
+def before_request():
+    # 获取请求的路径
+    if request.path == '/urls' or request.path == '/' or request.path == '/update' or request.path == '/delete' or request.path == '/search':
+        return
+    if (request.path != '/proxy' and request.path != '/p') and targeturl != '':
+        root = f'{request.base_url[:len(request.base_url) - len(request.path)]}'
+        target = f'{root}/proxy?url={targeturl}{request.url[len(root):]}'
+        print(target)
+        response = requests.get(target, headers=dict(request.headers))
+        content_type = response.headers.get('Content-Type', '')
+        content = response.content
+        return Response(content, content_type=content_type)
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
 def index():
-    session.clear()
-    cache.clear()
     with open('config.json', 'r', encoding='utf-8') as f:
         urls = json.load(f)
     return jsonify(urls),200
@@ -64,7 +73,6 @@ def delete():
 @app.route('/search', methods=['POST','GET'])
 @cross_origin() 
 def search():
-    cache.clear()
     name = request.args.get('name')
     res=[]
     with open('config.json', 'r', encoding='utf-8') as f:
@@ -76,20 +84,6 @@ def search():
         return jsonify(res), 200
     else:
         return jsonify({"message":"not found"}), 404
-targeturl = ''
-@app.before_request
-def before_request():
-    # 获取请求的路径
-    if request.path == '/urls' or request.path == '/' or request.path == '/update' or request.path == '/delete' or request.path == '/search':
-        return
-    if (request.path != '/proxy' and request.path != '/p') and targeturl != '':
-        root = f'{request.base_url[:len(request.base_url) - len(request.path)]}'
-        target = f'{root}/proxy?url={targeturl}{request.url[len(root):]}'
-        print(target)
-        response = requests.get(target, headers=dict(request.headers))
-        content_type = response.headers.get('Content-Type', '')
-        content = response.content
-        return Response(content, content_type=content_type)
 @app.route('/proxy')
 def proxy():
     def modify_js(js_content):
