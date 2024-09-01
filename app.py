@@ -6,7 +6,7 @@ import pvz
 import json
 import re
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
@@ -137,14 +137,6 @@ def request_url(request,url):
 
     except requests.exceptions.RequestException as e:
         return f"Failed to retrieve the page: {e}", 500
-@app.before_request
-def before_request():
-    path=request.path
-    if path!='/proxy':
-        url=request.url
-        url=url.replace(request.url_root[:-1],root_url)
-        url=f'http://localhost:3000/proxy?url={url}'
-        return request_url(request,url)
 @app.route('/proxy')
 def proxy():
     url = request.args.get('url')
