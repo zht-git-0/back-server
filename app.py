@@ -6,7 +6,7 @@ import pvz
 import json
 import re
 from bs4 import BeautifulSoup
-import mimetypes
+from urllib.parse import urljoin, urlparse
 app = Flask(__name__)
 @app.route('/', methods=['POST','GET'])
 @cross_origin() 
